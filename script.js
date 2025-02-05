@@ -133,3 +133,8 @@ function sendNotification(text, sound) {
         audio.play();
     }
 }
+document.addEventListener("DOMContentLoaded", () => {
+    if (Notification.permission === "granted") {
+        new Notification("Test", { body: "Diese Nachricht kommt direkt von script.js!", icon: "icon-192x192.png" });
+    }
+});
