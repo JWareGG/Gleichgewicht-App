@@ -1,18 +1,17 @@
-/* Lokale Schriftarten einbinden */
+/* Schriften direkt von deinem Server laden */
 @font-face {
     font-family: 'Inter';
-    src: url('fonts/Inter-Regular.woff2') format('woff2'),
-         url('fonts/Inter-Regular.woff') format('woff');
+    src: url('https://juliaware.de/wp-content/themes/chateau-child/fonts/inter-v18-latin-regular.woff2') format('woff2');
     font-weight: 400;
 }
 
 @font-face {
     font-family: 'Barlow Condensed';
-    src: url('fonts/BarlowCondensed-Regular.woff2') format('woff2'),
-         url('fonts/BarlowCondensed-Regular.woff') format('woff');
+    src: url('https://juliaware.de/wp-content/themes/chateau-child/fonts/barlow-condensed-v12-latin-regular.woff2') format('woff2');
     font-weight: 400;
 }
 
+/* Allgemeine Stile */
 body {
     font-family: 'Inter', sans-serif;
     font-weight: 400;
@@ -20,9 +19,9 @@ body {
     background-color: #f5f5f5;
     text-align: center;
     padding: 20px;
-    color: #333; /* Standardfarbe für Body-Text */
 }
 
+/* Container */
 .container {
     max-width: 350px;
     margin: auto;
@@ -40,15 +39,15 @@ h1, h2 {
 }
 
 h1 {
-    font-size: 2.5em; /* Vergrößert */
-    color: #333; /* Gleiche Farbe wie Body-Text */
-    margin-bottom: 20px;
+    font-size: 2.5em;
+    color: #333;
+    margin-bottom: 15px;
 }
 
 h2 {
     font-size: 1.5em;
     color: #333;
-    margin-top: 30px;
+    margin-top: 20px;
 }
 
 /* Eingabefelder */
