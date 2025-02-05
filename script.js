@@ -27,11 +27,28 @@ document.getElementById('addReminder').addEventListener('click', function() {
     }
 });
 
-function addReminder(text, time, sound) {
-    const reminder = { text, time, sound }; // Speichert Erinnerung mit Zeit und Soundoption
+function addReminder() {
+    let reminderInput = document.getElementById("reminder");
+    let timeInput = document.getElementById("time");
+    let soundInput = document.getElementById("sound");
+
+    let reminderText = reminderInput.value.trim();
+    let reminderTime = timeInput.value;
+    let soundEnabled = soundInput.checked;
+
+    if (reminderText === "" || reminderTime === "") {
+        alert("Bitte Erinnerungstext und Zeit eingeben!");
+        return;
+    }
+
+    const reminder = { text: reminderText, time: reminderTime, sound: soundEnabled };
+
     let reminders = JSON.parse(localStorage.getItem("reminders")) || [];
     reminders.push(reminder);
     localStorage.setItem("reminders", JSON.stringify(reminders));
+
+    reminderInput.value = "";
+    timeInput.value = "";
 
     updateReminderList();
 }
