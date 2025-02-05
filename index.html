@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#72be44">
+  <meta name="description" content="Eine App, die dich an wichtige Dinge erinnert, um dein Gleichgewicht zu halten.">
+  
+  <title>Erinnerungen für dein Gleichgewicht</title>
+
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+
+  <div class="container">
+    <h1>Erinnerungen für dein Gleichgewicht</h1>
+
+    <div class="input-group">
+      <label for="reminder">Erinnerungstext hier eingeben:</label>
+      <input type="text" id="reminder" placeholder="Text">
+    </div>
+
+    <div class="input-group">
+      <label for="time">Uhrzeit für deine tägliche Erinnerung:</label>
+      <input type="time" id="time">
+    </div>
+
+    <div class="checkbox-group">
+      <label for="sound">
+        <input type="checkbox" id="sound">
+        <span>Signalton für diese Erinnerung aktivieren</span>
+      </label>
+    </div>
+
+    <button id="addReminder">Erinnerung hinzufügen</button>
+
+    <h2>Deine aktiven Erinnerungen:</h2>
+    <ul id="reminderList"></ul>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
