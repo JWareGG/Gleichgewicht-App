@@ -1,3 +1,8 @@
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js')
+    .then(reg => console.log("✅ Service Worker registriert:", reg))
+    .catch(error => console.log("❌ Fehler beim Service Worker:", error));
+}
 document.addEventListener("DOMContentLoaded", function() {
     requestNotificationPermission(); // Benutzer um Erlaubnis für Push-Benachrichtigungen bitten
     loadReminders(); // Erinnerungen beim Laden abrufen
