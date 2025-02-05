@@ -7,9 +7,9 @@ if ('serviceWorker' in navigator) {
 
 // Warten, bis DOM geladen ist
 document.addEventListener("DOMContentLoaded", function() {
-    console.log("✅ DOM ist geladen, versuche Button zu verbinden...");
+    console.log("✅ DOM geladen, Initialisiere App...");
+    
     let button = document.getElementById("addReminder");
-
     if (button) {
         console.log("✅ Button gefunden, Event wird registriert!");
         button.addEventListener("click", addReminder);
@@ -18,6 +18,8 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     loadReminders(); // Erinnerungen aus LocalStorage laden
+    requestNotificationPermission(); // Benutzer um Erlaubnis für Benachrichtigungen bitten
+    setInterval(checkReminders, 60000); // Erinnerungen alle 60 Sek. prüfen
 });
 
 // Funktion: Erinnerung hinzufügen
@@ -60,17 +62,19 @@ function loadReminders() {
 
 // Funktion: Erinnerung im UI anzeigen
 function createReminderElement(text, time, sound) {
+    console.log("📌 Erinnerung wird erstellt:", text, time, sound);
+
     const li = document.createElement('li');
 
     // Uhrzeit formatieren
     const formattedTime = time ? time + " Uhr" : "";
 
-    // Text-Spalte
+    // Erinnerungstext
     const reminderText = document.createElement('span');
     reminderText.className = "reminder-text";
     reminderText.textContent = text + " - " + formattedTime;
 
-    // Glocke-Icon falls Sound aktiv
+    // Glocken-Icon falls Sound aktiv
     let soundIcon = document.createElement('span');
     soundIcon.className = "reminder-sound";
     if (sound) {
@@ -141,6 +145,3 @@ function sendNotification(text, sound) {
         audio.play();
     }
 }
-
-// Erinnerungen jede Minute prüfen
-setInterval(checkReminders, 60000);
