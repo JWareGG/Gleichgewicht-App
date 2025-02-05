@@ -7,11 +7,17 @@ if ('serviceWorker' in navigator) {
 
 // Warten, bis DOM geladen ist
 document.addEventListener("DOMContentLoaded", function() {
-    requestNotificationPermission();
-    loadReminders();
-    checkReminders(); // Sofort prüfen
-    setInterval(checkReminders, 60000); // Jede Minute prüfen
-    document.getElementById("addReminder").addEventListener("click", addReminder);
+    console.log("✅ DOM ist geladen, versuche Button zu verbinden...");
+    let button = document.getElementById("addReminder");
+
+    if (button) {
+        console.log("✅ Button gefunden, Event wird registriert!");
+        button.addEventListener("click", function() {
+            console.log("✅ Button wurde geklickt!");
+        });
+    } else {
+        console.log("❌ Button nicht gefunden!");
+    }
 });
 
 // Funktion: Erinnerung hinzufügen
