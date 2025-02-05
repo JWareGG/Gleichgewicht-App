@@ -143,3 +143,25 @@ document.addEventListener("DOMContentLoaded", () => {
         new Notification("Test", { body: "Diese Nachricht kommt direkt von script.js!", icon: "icon-192x192.png" });
     }
 });
+function checkReminders() {
+    let now = new Date();
+    let currentTime = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
+
+    let reminders = JSON.parse(localStorage.getItem("reminders")) || [];
+    reminders.forEach(reminder => {
+        if (reminder.time === currentTime) {
+            new Notification("Erinnerung", { 
+                body: reminder.text, 
+                icon: "icon-192x192.png"
+            });
+
+            if (reminder.sound) {
+                let audio = new Audio("notification-sound.mp3");
+                audio.play();
+            }
+        }
+    });
+}
+
+// Überprüfe Erinnerungen jede Minute
+setInterval(checkReminders, 60000);
