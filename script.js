@@ -27,9 +27,14 @@ document.getElementById('addReminder').addEventListener('click', function() {
     }
 });
 
-function addReminder(text, time, sound, save = false) {
-    const li = document.createElement('li');
+function addReminder(text, time, sound) {
+    const reminder = { text, time, sound }; // Speichert Erinnerung mit Zeit und Soundoption
+    let reminders = JSON.parse(localStorage.getItem("reminders")) || [];
+    reminders.push(reminder);
+    localStorage.setItem("reminders", JSON.stringify(reminders));
 
+    updateReminderList();
+}
     // Uhrzeit mit "Uhr" hinzufügen
     const formattedTime = time ? time + " Uhr" : "";
 
