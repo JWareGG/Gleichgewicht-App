@@ -1,32 +1,20 @@
+// Service Worker registrieren
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js')
     .then(reg => console.log("✅ Service Worker registriert:", reg))
     .catch(error => console.log("❌ Fehler beim Service Worker:", error));
 }
+
+// Warten, bis DOM geladen ist
 document.addEventListener("DOMContentLoaded", function() {
-    requestNotificationPermission(); // Benutzer um Erlaubnis für Push-Benachrichtigungen bitten
-    loadReminders(); // Erinnerungen beim Laden abrufen
-    checkReminders(); // Sofort prüfen, ob eine Erinnerung fällig ist
-    setInterval(checkReminders, 60000); // Jede Minute Erinnerungen prüfen
+    requestNotificationPermission();
+    loadReminders();
+    checkReminders(); // Sofort prüfen
+    setInterval(checkReminders, 60000); // Jede Minute prüfen
+    document.getElementById("addReminder").addEventListener("click", addReminder);
 });
 
-document.getElementById('addReminder').addEventListener('click', function() {
-    let reminderInput = document.getElementById('reminder');
-    let timeInput = document.getElementById('time');
-    let soundCheckbox = document.getElementById('sound');
-
-    let reminderText = reminderInput.value.trim();
-    let reminderTime = timeInput.value;
-    let soundEnabled = soundCheckbox.checked;
-
-    if (reminderText !== "" && reminderTime !== "") {
-        addReminder(reminderText, reminderTime, soundEnabled, true);
-        reminderInput.value = "";
-        timeInput.value = "";
-        soundCheckbox.checked = false;
-    }
-});
-
+// Funktion: Erinnerung hinzufügen
 function addReminder() {
     let reminderInput = document.getElementById("reminder");
     let timeInput = document.getElementById("time");
@@ -49,26 +37,37 @@ function addReminder() {
 
     reminderInput.value = "";
     timeInput.value = "";
+    soundInput.checked = false;
 
     updateReminderList();
 }
-    // Uhrzeit mit "Uhr" hinzufügen
+
+// Funktion: Erinnerungen aus `localStorage` laden
+function loadReminders() {
+    let reminders = JSON.parse(localStorage.getItem("reminders")) || [];
+    reminders.forEach(reminder => {
+        createReminderElement(reminder.text, reminder.time, reminder.sound);
+    });
+}
+
+// Funktion: Erinnerung im UI anzeigen
+function createReminderElement(text, time, sound) {
+    const li = document.createElement('li');
+
+    // Uhrzeit formatieren
     const formattedTime = time ? time + " Uhr" : "";
 
-    // Spaltenstruktur
+    // Text-Spalte
     const reminderText = document.createElement('span');
     reminderText.className = "reminder-text";
     reminderText.textContent = text + " - " + formattedTime;
 
-    // Glocken-Icon, falls aktiviert
+    // Glocke-Icon falls Sound aktiv
     let soundIcon = document.createElement('span');
     soundIcon.className = "reminder-sound";
     if (sound) {
         soundIcon.innerHTML = "🔔";
     }
-
-    // Platzhalter für Leerraum
-    const spacer = document.createElement('span');
 
     // Mülleimer-Button
     const deleteBtn = document.createElement('button');
@@ -80,46 +79,25 @@ function addReminder() {
     `;
     deleteBtn.addEventListener('click', function() {
         li.remove();
-        removeReminder(text, time); // Aus Speicher entfernen
+        removeReminder(text, time);
     });
 
-    // Elemente ins <li> einfügen (4-Spalten-Aufbau)
+    // Spalten-Struktur erstellen
     li.appendChild(reminderText);
     li.appendChild(soundIcon);
-    li.appendChild(spacer);
     li.appendChild(deleteBtn);
 
     document.getElementById('reminderList').appendChild(li);
-
-    // Nur speichern, wenn die Funktion durch den Button ausgelöst wurde
-    if (save) {
-        saveReminder(text, time, sound);
-    }
 }
 
-// Erinnerung in LocalStorage speichern
-function saveReminder(text, time, sound) {
-    let reminders = JSON.parse(localStorage.getItem("reminders")) || [];
-    reminders.push({ text, time, sound });
-    localStorage.setItem("reminders", JSON.stringify(reminders));
-}
-
-// Erinnerungen aus LocalStorage laden
-function loadReminders() {
-    let reminders = JSON.parse(localStorage.getItem("reminders")) || [];
-    reminders.forEach(reminder => {
-        addReminder(reminder.text, reminder.time, reminder.sound, false);
-    });
-}
-
-// Erinnerung aus LocalStorage löschen
+// Funktion: Erinnerung aus `localStorage` entfernen
 function removeReminder(text, time) {
     let reminders = JSON.parse(localStorage.getItem("reminders")) || [];
     reminders = reminders.filter(reminder => reminder.text !== text || reminder.time !== time);
     localStorage.setItem("reminders", JSON.stringify(reminders));
 }
 
-// Benutzer um Erlaubnis für Benachrichtigungen bitten
+// Funktion: Benutzer um Benachrichtigungs-Erlaubnis bitten
 function requestNotificationPermission() {
     if ("Notification" in window) {
         Notification.requestPermission().then(permission => {
@@ -128,7 +106,7 @@ function requestNotificationPermission() {
     }
 }
 
-// Erinnerungen prüfen und Benachrichtigung senden
+// Funktion: Erinnerungen prüfen und Benachrichtigung senden
 function checkReminders() {
     let reminders = JSON.parse(localStorage.getItem("reminders")) || [];
     let now = new Date();
@@ -143,42 +121,15 @@ function checkReminders() {
     });
 }
 
-// Benachrichtigung senden
+// Funktion: Benachrichtigung senden
 function sendNotification(text, sound) {
     if ("Notification" in window && Notification.permission === "granted") {
         new Notification("Erinnerung", { body: text, icon: "icon-192x192.png" });
     }
 
-    // Ton abspielen, wenn Glocke aktiviert war
+    // Falls Ton aktiviert ist, abspielen
     if (sound) {
-        let audio = new Audio("alarm.mp3");
+        let audio = new Audio("notification-sound.mp3");
         audio.play();
     }
 }
-document.addEventListener("DOMContentLoaded", () => {
-    if (Notification.permission === "granted") {
-        new Notification("Test", { body: "Diese Nachricht kommt direkt von script.js!", icon: "icon-192x192.png" });
-    }
-});
-function checkReminders() {
-    let now = new Date();
-    let currentTime = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
-
-    let reminders = JSON.parse(localStorage.getItem("reminders")) || [];
-    reminders.forEach(reminder => {
-        if (reminder.time === currentTime) {
-            new Notification("Erinnerung", { 
-                body: reminder.text, 
-                icon: "icon-192x192.png"
-            });
-
-            if (reminder.sound) {
-                let audio = new Audio("notification-sound.mp3");
-                audio.play();
-            }
-        }
-    });
-}
-
-// Überprüfe Erinnerungen jede Minute
-setInterval(checkReminders, 60000);
