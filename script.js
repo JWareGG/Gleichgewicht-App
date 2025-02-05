@@ -12,12 +12,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
     if (button) {
         console.log("✅ Button gefunden, Event wird registriert!");
-        button.addEventListener("click", function() {
-            console.log("✅ Button wurde geklickt!");
-        });
+        button.addEventListener("click", addReminder);
     } else {
         console.log("❌ Button nicht gefunden!");
     }
+
+    loadReminders(); // Erinnerungen aus LocalStorage laden
 });
 
 // Funktion: Erinnerung hinzufügen
@@ -45,12 +45,14 @@ function addReminder() {
     timeInput.value = "";
     soundInput.checked = false;
 
-    updateReminderList();
+    createReminderElement(reminderText, reminderTime, soundEnabled);
 }
 
 // Funktion: Erinnerungen aus `localStorage` laden
 function loadReminders() {
     let reminders = JSON.parse(localStorage.getItem("reminders")) || [];
+    document.getElementById('reminderList').innerHTML = ""; // Liste leeren, um doppelte Einträge zu vermeiden
+
     reminders.forEach(reminder => {
         createReminderElement(reminder.text, reminder.time, reminder.sound);
     });
@@ -139,3 +141,6 @@ function sendNotification(text, sound) {
         audio.play();
     }
 }
+
+// Erinnerungen jede Minute prüfen
+setInterval(checkReminders, 60000);
