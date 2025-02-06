@@ -1,67 +1,19 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <title>Debugging</title>
-</head>
-<body>
-    <h1>Debugging-Log</h1>
-    <pre id="log"></pre>
+<script>
+    function checkBrowserSupport() {
+        logMessage("📢 Prüfe, ob Benachrichtigungen unterstützt werden...");
 
-    <button id="checkNotifButton">🔍 Benachrichtigungsstatus prüfen</button>
-
-    <script>
-        // JavaScript-Test
-        alert("JavaScript funktioniert!");
-
-        function logMessage(message) {
-            document.getElementById("log").textContent += message + "\n";
-            console.log(message); // Zeigt es in der Browser-Konsole an
+        if (!("Notification" in window)) {
+            logMessage("❌ Dein Browser unterstützt KEINE Benachrichtigungen.");
+        } else {
+            logMessage("✅ Dein Browser unterstützt Benachrichtigungen!");
         }
 
-        logMessage("📢 Debugging gestartet!");
-
-        // Stellt sicher, dass der Button funktioniert
-        document.addEventListener("DOMContentLoaded", function() {
-            document.getElementById("checkNotifButton").addEventListener("click", checkNotificationPermission);
-            logMessage("✅ Button-Event erfolgreich verbunden!");
-        });
-
-        function checkNotificationPermission() {
-            logMessage("📢 Prüfe Benachrichtigungsstatus...");
-
-            if (!("Notification" in window)) {
-                logMessage("❌ Dieses Gerät unterstützt keine Benachrichtigungen.");
-                return;
-            }
-
-            logMessage("🔎 Aktueller Status: " + Notification.permission);
-
-            if (Notification.permission === "denied") {
-                logMessage("❌ Benachrichtigungen wurden blockiert! Bitte in den Browser-Einstellungen aktivieren.");
-            } else if (Notification.permission === "default") {
-                logMessage("🔔 Bitte erlaube Benachrichtigungen in der erscheinenden Anfrage.");
-                requestNotificationPermission();
-            } else if (Notification.permission === "granted") {
-                logMessage("✅ Benachrichtigungen sind erlaubt!");
-            }
+        if (!("serviceWorker" in navigator)) {
+            logMessage("❌ Dein Browser unterstützt KEINE Service Worker!");
+        } else {
+            logMessage("✅ Dein Browser unterstützt Service Worker!");
         }
+    }
+</script>
 
-        function requestNotificationPermission() {
-            logMessage("📢 Anfrage für Benachrichtigungen wird gesendet...");
-            
-            Notification.requestPermission().then(permission => {
-                logMessage("📢 Benutzerentscheidung: " + permission);
-
-                if (permission === "granted") {
-                    logMessage("✅ Benachrichtigungen sind jetzt aktiviert!");
-                } else {
-                    logMessage("❌ Benutzer hat Benachrichtigungen abgelehnt.");
-                }
-            }).catch(error => {
-                logMessage("❌ Fehler beim Anfragen der Benachrichtigungen: " + error);
-            });
-        }
-    </script>
-</body>
-</html>
+<button onclick="checkBrowserSupport()">🔎 Browser-Funktionalität testen</button>
