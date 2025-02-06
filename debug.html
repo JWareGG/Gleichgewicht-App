@@ -35,6 +35,11 @@
 
         // Zeigt den aktuellen Cache-Inhalt an
         caches.keys().then(keys => logMessage("📂 Cache Inhalte: " + keys.join(", ")));
+
+        // Falls kein Service Worker registriert ist, registriere ihn jetzt!
+        navigator.serviceWorker.register("sw.js")
+            .then(reg => logMessage("✅ Service Worker erfolgreich registriert: " + JSON.stringify(reg)))
+            .catch(error => logMessage("❌ Fehler beim Registrieren: " + error));
     </script>
 </body>
 </html>
