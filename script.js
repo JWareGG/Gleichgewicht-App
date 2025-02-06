@@ -37,7 +37,12 @@ function addReminder() {
         return;
     }
 
-    const reminder = { text: reminderText, time: reminderTime, sound: soundEnabled };
+    const reminder = {
+        id: Date.now(), // Eindeutige ID
+        text: reminderText,
+        time: reminderTime,
+        sound: soundEnabled
+    };
 
     let reminders = JSON.parse(localStorage.getItem("reminders")) || [];
     reminders.push(reminder);
@@ -47,7 +52,7 @@ function addReminder() {
     timeInput.value = "";
     soundInput.checked = false;
 
-    createReminderElement(reminderText, reminderTime, soundEnabled);
+    createReminderElement(reminder.text, reminder.time, reminder.sound);
 }
 
 // Funktion: Erinnerungen aus `localStorage` laden
@@ -105,16 +110,22 @@ function createReminderElement(text, time, sound) {
 // Funktion: Erinnerung aus `localStorage` entfernen
 function removeReminder(text, time) {
     let reminders = JSON.parse(localStorage.getItem("reminders")) || [];
-    reminders = reminders.filter(reminder => reminder.text !== text || reminder.time !== time);
+    reminders = reminders.filter(reminder => !(reminder.text === text && reminder.time === time));
     localStorage.setItem("reminders", JSON.stringify(reminders));
 }
 
 // Funktion: Benutzer um Benachrichtigungs-Erlaubnis bitten
 function requestNotificationPermission() {
     if ("Notification" in window) {
-        Notification.requestPermission().then(permission => {
-            console.log("Benachrichtigungserlaubnis:", permission);
-        });
+        if (Notification.permission === "denied") {
+            alert("Benachrichtigungen sind blockiert. Bitte in den Browsereinstellungen aktivieren.");
+        }
+        // Falls Berechtigung noch nicht erteilt wurde, anfragen:
+        else if (Notification.permission !== "granted") {
+            Notification.requestPermission().then(permission => {
+                console.log("Benachrichtigungserlaubnis:", permission);
+            });
+        }
     }
 }
 
@@ -122,15 +133,21 @@ function requestNotificationPermission() {
 function checkReminders() {
     let reminders = JSON.parse(localStorage.getItem("reminders")) || [];
     let now = new Date();
-    let currentHour = now.getHours().toString().padStart(2, "0");
-    let currentMinute = now.getMinutes().toString().padStart(2, "0");
-    let currentTime = currentHour + ":" + currentMinute;
+    let currentTime = now.toTimeString().slice(0, 5); // "hh:mm" Format
 
     reminders.forEach(reminder => {
         if (reminder.time === currentTime) {
+            console.log("⏰ Erinnerung fällig:", reminder.text);
             sendNotification(reminder.text, reminder.sound);
         }
     });
+
+    let nextMinute = new Date();
+    nextMinute.setSeconds(0, 0);
+    nextMinute.setMinutes(nextMinute.getMinutes() + 1);
+
+    let delay = nextMinute - now;
+    setTimeout(checkReminders, delay);
 }
 
 // Funktion: Benachrichtigung senden
@@ -141,7 +158,13 @@ function sendNotification(text, sound) {
 
     // Falls Ton aktiviert ist, abspielen
     if (sound) {
-        let audio = new Audio("notification-sound.mp3");
-        audio.play();
+        let audio = document.getElementById("reminderSound");
+        if (!audio) {
+            audio = new Audio("notification-sound.mp3");
+            audio.id = "reminderSound";
+            document.body.appendChild(audio);
+        }
+    
+        audio.play().catch(error => console.log("Sound-Fehler:", error));
     }
 }
