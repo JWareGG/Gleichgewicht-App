@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Debugging</title>
+</head>
+<body>
+    <h1>Debugging-Log</h1>
+    <pre id="log"></pre>
+
+    <script>
+        function logMessage(message) {
+            document.getElementById("log").textContent += message + "\n";
+        }
+
+        logMessage("📢 Debugging gestartet!");
+
+        navigator.serviceWorker.getRegistration().then(reg => {
+            if (reg) {
+                logMessage("✅ Service Worker aktiv: " + JSON.stringify(reg));
+            } else {
+                logMessage("❌ Kein Service Worker gefunden!");
+            }
+        });
+
+        logMessage("🔒 Ist HTTPS aktiv? " + location.protocol);
+
+        caches.keys().then(keys => logMessage("📂 Cache Inhalte: " + keys.join(", ")));
+    </script>
+</body>
+</html>
