@@ -1,19 +1,45 @@
-<script>
-    function checkBrowserSupport() {
-        logMessage("📢 Prüfe, ob Benachrichtigungen unterstützt werden...");
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Debugging</title>
+</head>
+<body>
+    <h1>Debugging-Log</h1>
+    <pre id="log"></pre>
 
-        if (!("Notification" in window)) {
-            logMessage("❌ Dein Browser unterstützt KEINE Benachrichtigungen.");
-        } else {
-            logMessage("✅ Dein Browser unterstützt Benachrichtigungen!");
+    <button id="checkBrowserButton">🔎 Browser-Funktionalität testen</button>
+
+    <script>
+        // Funktion zum Anzeigen von Logs auf der Seite
+        function logMessage(message) {
+            document.getElementById("log").textContent += message + "\n";
+            console.log(message); // Zeigt das Log zusätzlich in der Konsole
         }
 
-        if (!("serviceWorker" in navigator)) {
-            logMessage("❌ Dein Browser unterstützt KEINE Service Worker!");
-        } else {
-            logMessage("✅ Dein Browser unterstützt Service Worker!");
-        }
-    }
-</script>
+        logMessage("📢 Debugging gestartet!");
 
-<button onclick="checkBrowserSupport()">🔎 Browser-Funktionalität testen</button>
+        // Stellt sicher, dass der Button funktioniert
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById("checkBrowserButton").addEventListener("click", checkBrowserSupport);
+            logMessage("✅ Button-Event erfolgreich verbunden!");
+        });
+
+        function checkBrowserSupport() {
+            logMessage("📢 Prüfe, ob Benachrichtigungen unterstützt werden...");
+
+            if (!("Notification" in window)) {
+                logMessage("❌ Dein Browser unterstützt KEINE Benachrichtigungen.");
+            } else {
+                logMessage("✅ Dein Browser unterstützt Benachrichtigungen!");
+            }
+
+            if (!("serviceWorker" in navigator)) {
+                logMessage("❌ Dein Browser unterstützt KEINE Service Worker!");
+            } else {
+                logMessage("✅ Dein Browser unterstützt Service Worker!");
+            }
+        }
+    </script>
+</body>
+</html>
