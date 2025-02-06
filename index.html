@@ -11,6 +11,22 @@
   <link rel="stylesheet" href="style.css">
   <link rel="manifest" href="manifest.json">
 </head>
+<script>
+  console.log("📢 Debugging gestartet!");
+  
+  navigator.serviceWorker.getRegistration().then(reg => {
+      if (reg) {
+          console.log("✅ Service Worker aktiv:", reg);
+      } else {
+          console.log("❌ Kein Service Worker gefunden!");
+      }
+  });
+
+  console.log("🔒 Ist HTTPS aktiv?", location.protocol);
+
+  caches.keys().then(keys => console.log("📂 Cache Inhalte:", keys));
+</script>
+
 <body>
 
   <div class="container">
