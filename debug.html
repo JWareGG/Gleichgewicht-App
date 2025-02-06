@@ -40,6 +40,32 @@
         navigator.serviceWorker.register("sw.js")
             .then(reg => logMessage("✅ Service Worker erfolgreich registriert: " + JSON.stringify(reg)))
             .catch(error => logMessage("❌ Fehler beim Registrieren: " + error));
+
+        // Prüft, ob der Service Worker bereit ist
+        navigator.serviceWorker.ready.then(reg => {
+            logMessage("🚀 Service Worker ist jetzt aktiv und bereit!");
+        }).catch(error => {
+            logMessage("❌ Fehler: Service Worker ist NICHT bereit! " + error);
+        });
+
+        // Funktion zum Testen von Benachrichtigungen
+        function testNotification() {
+            if ("Notification" in window && Notification.permission === "granted") {
+                navigator.serviceWorker.ready.then(reg => {
+                    reg.showNotification("🔔 Test-Erinnerung!", {
+                        body: "Dies ist eine Test-Benachrichtigung vom Service Worker.",
+                        icon: "icon-192x192.png"
+                    });
+                    logMessage("✅ Test-Erinnerung wurde gesendet!");
+                }).catch(error => {
+                    logMessage("❌ Fehler beim Senden der Test-Erinnerung: " + error);
+                });
+            } else {
+                logMessage("❌ Benachrichtigungen sind blockiert oder nicht erlaubt!");
+            }
+        }
     </script>
+
+    <button onclick="testNotification()">🔔 Test-Erinnerung senden</button>
 </body>
 </html>
