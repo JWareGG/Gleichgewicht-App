@@ -1,4 +1,9 @@
 <script>
+    function logMessage(message) {
+        document.getElementById("log").textContent += message + "\n";
+        console.log(message); // Schreibt zusätzlich in die Browser-Konsole
+    }
+
     function checkNotificationPermission() {
         logMessage("📢 Prüfe Benachrichtigungsstatus...");
 
@@ -20,6 +25,8 @@
     }
 
     function requestNotificationPermission() {
+        logMessage("📢 Anfrage für Benachrichtigungen wird gesendet...");
+        
         Notification.requestPermission().then(permission => {
             logMessage("📢 Benutzerentscheidung: " + permission);
 
@@ -28,6 +35,8 @@
             } else {
                 logMessage("❌ Benutzer hat Benachrichtigungen abgelehnt.");
             }
+        }).catch(error => {
+            logMessage("❌ Fehler beim Anfragen der Benachrichtigungen: " + error);
         });
     }
 </script>
