@@ -1,8 +1,9 @@
 {
-    "name": "Gleichgewicht Erinnerungs-App",
+    "name": "Erinnerungen für dein Gleichgewicht",
     "short_name": "Erinnerungen",
     "start_url": "index.html",
-    "display": "standalone",
+    "display": "Fullscreen",
+    "orientation": "portrait",
     "background_color": "#f0f0f0",
     "theme_color": "#72be44",
     "icons": [
