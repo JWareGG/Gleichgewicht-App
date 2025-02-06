@@ -15,16 +15,25 @@
 
         logMessage("📢 Debugging gestartet!");
 
+        // Prüft, ob der Service Worker registriert ist
         navigator.serviceWorker.getRegistration().then(reg => {
             if (reg) {
                 logMessage("✅ Service Worker aktiv: " + JSON.stringify(reg));
+
+                // Überprüft, ob ein Update für den Service Worker gefunden wird
+                reg.addEventListener("updatefound", () => {
+                    logMessage("🔄 Service Worker Update gefunden!");
+                });
+
             } else {
                 logMessage("❌ Kein Service Worker gefunden!");
             }
         });
 
+        // Prüft, ob die Seite über HTTPS läuft (erforderlich für Service Worker)
         logMessage("🔒 Ist HTTPS aktiv? " + location.protocol);
 
+        // Zeigt den aktuellen Cache-Inhalt an
         caches.keys().then(keys => logMessage("📂 Cache Inhalte: " + keys.join(", ")));
     </script>
 </body>
