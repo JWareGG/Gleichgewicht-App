@@ -1,71 +1,35 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <title>Debugging</title>
-</head>
-<body>
-    <h1>Debugging-Log</h1>
-    <pre id="log"></pre>
+<script>
+    function checkNotificationPermission() {
+        logMessage("📢 Prüfe Benachrichtigungsstatus...");
 
-    <script>
-        function logMessage(message) {
-            document.getElementById("log").textContent += message + "\n";
+        if (!("Notification" in window)) {
+            logMessage("❌ Dieses Gerät unterstützt keine Benachrichtigungen.");
+            return;
         }
 
-        logMessage("📢 Debugging gestartet!");
+        logMessage("🔎 Aktueller Status: " + Notification.permission);
 
-        // Prüft, ob der Service Worker registriert ist
-        navigator.serviceWorker.getRegistration().then(reg => {
-            if (reg) {
-                logMessage("✅ Service Worker aktiv: " + JSON.stringify(reg));
-
-                // Überprüft, ob ein Update für den Service Worker gefunden wird
-                reg.addEventListener("updatefound", () => {
-                    logMessage("🔄 Service Worker Update gefunden!");
-                });
-
-            } else {
-                logMessage("❌ Kein Service Worker gefunden!");
-            }
-        });
-
-        // Prüft, ob die Seite über HTTPS läuft (erforderlich für Service Worker)
-        logMessage("🔒 Ist HTTPS aktiv? " + location.protocol);
-
-        // Zeigt den aktuellen Cache-Inhalt an
-        caches.keys().then(keys => logMessage("📂 Cache Inhalte: " + keys.join(", ")));
-
-        // Falls kein Service Worker registriert ist, registriere ihn jetzt!
-        navigator.serviceWorker.register("sw.js")
-            .then(reg => logMessage("✅ Service Worker erfolgreich registriert: " + JSON.stringify(reg)))
-            .catch(error => logMessage("❌ Fehler beim Registrieren: " + error));
-
-        // Prüft, ob der Service Worker bereit ist
-        navigator.serviceWorker.ready.then(reg => {
-            logMessage("🚀 Service Worker ist jetzt aktiv und bereit!");
-        }).catch(error => {
-            logMessage("❌ Fehler: Service Worker ist NICHT bereit! " + error);
-        });
-
-        // Funktion zum Testen von Benachrichtigungen
-        function testNotification() {
-            if ("Notification" in window && Notification.permission === "granted") {
-                navigator.serviceWorker.ready.then(reg => {
-                    reg.showNotification("🔔 Test-Erinnerung!", {
-                        body: "Dies ist eine Test-Benachrichtigung vom Service Worker.",
-                        icon: "icon-192x192.png"
-                    });
-                    logMessage("✅ Test-Erinnerung wurde gesendet!");
-                }).catch(error => {
-                    logMessage("❌ Fehler beim Senden der Test-Erinnerung: " + error);
-                });
-            } else {
-                logMessage("❌ Benachrichtigungen sind blockiert oder nicht erlaubt!");
-            }
+        if (Notification.permission === "denied") {
+            logMessage("❌ Benachrichtigungen wurden blockiert! Bitte in den Browser-Einstellungen aktivieren.");
+        } else if (Notification.permission === "default") {
+            logMessage("🔔 Bitte erlaube Benachrichtigungen in der erscheinenden Anfrage.");
+            requestNotificationPermission();
+        } else if (Notification.permission === "granted") {
+            logMessage("✅ Benachrichtigungen sind erlaubt!");
         }
-    </script>
+    }
 
-    <button onclick="testNotification()">🔔 Test-Erinnerung senden</button>
-</body>
-</html>
+    function requestNotificationPermission() {
+        Notification.requestPermission().then(permission => {
+            logMessage("📢 Benutzerentscheidung: " + permission);
+
+            if (permission === "granted") {
+                logMessage("✅ Benachrichtigungen sind jetzt aktiviert!");
+            } else {
+                logMessage("❌ Benutzer hat Benachrichtigungen abgelehnt.");
+            }
+        });
+    }
+</script>
+
+<button onclick="checkNotificationPermission()">🔍 Benachrichtigungsstatus prüfen</button>
